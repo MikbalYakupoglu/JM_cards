@@ -7,6 +7,8 @@ import com.example.cards.dto.ResponseDto;
 import com.example.cards.service.CardService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class CardsController {
 
     private final CardService cardService;
+    private static final Logger logger = LogManager.getLogger(CardsController.class);
 
     @Autowired
     public CardsController(CardService cardService) {
@@ -42,7 +45,7 @@ public class CardsController {
     public ResponseEntity<CardDto> fetchCard(@RequestParam
                                              @Pattern(regexp = "(^$|\\d{10})", message = "Mobile number must be 10 digits")
                                              String mobileNumber) {
-
+        logger.info("fetching card with mobileNumber : {}", mobileNumber);
         CardDto cardDto = cardService.fetchCard(mobileNumber);
 
         return new ResponseEntity<>(cardDto, HttpStatus.OK);
