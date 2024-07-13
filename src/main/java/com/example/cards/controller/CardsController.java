@@ -17,18 +17,18 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "/api/v1/cards", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/cards", produces = MediaType.APPLICATION_JSON_VALUE)
 @Validated
 public class CardsController {
 
     private final CardService cardService;
-    private static final Logger logger = LogManager.getLogger(CardsController.class);
 
     @Autowired
     public CardsController(CardService cardService) {
         this.cardService = cardService;
     }
 
+    private static final Logger logger = LogManager.getLogger(CardsController.class);
 
     @PostMapping("/create")
     public ResponseEntity<ResponseDto> createCard(@RequestParam
@@ -42,9 +42,11 @@ public class CardsController {
     }
 
     @GetMapping("/fetch")
-    public ResponseEntity<CardDto> fetchCard(@RequestParam
-                                             @Pattern(regexp = "(^$|\\d{10})", message = "Mobile number must be 10 digits")
+    public ResponseEntity<CardDto> fetchCard(@RequestHeader("nakoual-correlation-id") String correlationId,
+            @RequestParam @Pattern(regexp = "(^$|\\d{10})", message = "Mobile number must be 10 digits")
                                              String mobileNumber) {
+
+        logger.info("nakoual-correlation-id found : {}", correlationId);
         logger.info("fetching card with mobileNumber : {}", mobileNumber);
         CardDto cardDto = cardService.fetchCard(mobileNumber);
 
